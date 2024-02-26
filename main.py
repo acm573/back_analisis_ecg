@@ -61,12 +61,13 @@ def funcionB(vector_doble):
 
     #simula una respuesta de analisis para enviar respuesta al front
     #y guardar información en MongoDB
-    totalLatidos = 4
+    totalLatidos = 5
     latidos = [
-        { 'tipo': 'Normal', 'latido': [1, 2, 3, 4, 5] },
-        { 'tipo': 'Atípico', 'latido': [6, 7, 8, 9, 10] },
-        { 'tipo': 'Normal', 'latido': [1, 2, 3, 4, 5] },
-        { 'tipo': 'Atípico', 'latido': [6, 7, 8, 9, 10] }
+        { 'tipo': 'Normal (N)', 'latido': [1, 2, 3, 4, 5] },
+        { 'tipo': 'Supraventricular (S)', 'latido': [6, 7, 8, 9, 10] },
+        { 'tipo': 'Ventricular (V)', 'latido': [1, 2, 3, 4, 5] },
+        { 'tipo': 'Unknown (Q)', 'latido': [6, 7, 8, 9, 10] },
+        { 'tipo': 'Fusion Beat (F)', 'latido': [6, 7, 8, 9, 10] }
     ]
     return {'totalLatidos' : totalLatidos, 'latidos': latidos}
 
