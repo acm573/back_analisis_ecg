@@ -101,6 +101,8 @@ def procesar_extraer_segmentos(ecg_vector):
     #calcula el muestreo del vector que se ha extraido
     muestreo = len(ecg_vector) / 10.0
 
+    print(muestreo)
+
     #se ajusta el muestreo del vector
     vector_125 = remuestreo(ecg_vector, muestreo, 125)
     
@@ -113,6 +115,7 @@ def procesar_extraer_segmentos(ecg_vector):
     if graficar == True:
         plt.plot(vector_norm_original)
         plt.show()
+        print(vector_norm_original[0:10])
 
     #deriva el vector
     vector_der = np.gradient(vector_norm_original)
@@ -124,10 +127,13 @@ def procesar_extraer_segmentos(ecg_vector):
     vector_norm = normalizar_vector(vector_sin_ceros)
 
     #distancia_minima = 10  # Cambia este valor según la distancia mínima deseada entre máximos
-    indices_maximos = encontrar_maximos(vector_norm_original, 0.2, 50)
+    indices_maximos = encontrar_maximos(vector_norm, 0.2, 50)
 
     #calcula la media entre latidos
     media = media_latidos(indices_maximos)
+
+    print(indices_maximos)
+    print(media)
 
     if graficar == True:
         print("Gráfica de latidos con vector derivado")
@@ -145,5 +151,10 @@ def procesar_extraer_segmentos(ecg_vector):
     if graficar == True:
         plt.plot(segmentos_ajustados[0])
         plt.show()
+
+    print('Esta es salida --> ',df_segmentos.head())
+
+    plt.plot(df_segmentos)
+    plt.show()
 
     return df_segmentos
