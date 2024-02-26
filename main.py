@@ -2,6 +2,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import base64
+import procesar_imagen as proci
+import procesar_segmentos as procs
+import procesar_modelos as procm
+import matplotlib.pyplot as plt
+
 
 # Definir modelos para FastAPI
 class RequestModel(BaseModel):
@@ -27,10 +32,20 @@ async def analyze_ecg(request: RequestModel):
         print('Llamada a funcion analyze_ecg')
         # Convertir la imagen base64 a un formato utilizable
         image_data = decode_image(request.imageBase64)
-        # Procesar la imagen con funciónA
-        vector_doble = funcionA(image_data)
+
+        #Obtiene el vector del ecg de la seccion
+        ecg_vector = proci.procesar_imagen(request.imageBase64)
+     
+        #Obtiene los latidos segmentados
+        df = procs.procesar_extraer_segmentos(ecg_vector)
+
+        #implemnenta la clasificación de los latidos
+        clasificacion = procm.clasificar_latidos(df)
+
+        print('clasificacion_final: ', clasificacion)
+
         # Analizar la información con funciónB
-        result = funcionB(vector_doble)
+        result = funcionB(df, clasificacion)
         # Construir la respuesta
         response = ResponseModel(totalLatidos=result['totalLatidos'],
                                  latidos=result['latidos'],
@@ -44,32 +59,35 @@ def decode_image(image_base64: str):
     image_bytes = base64.b64decode(image_base64)
     return image_bytes
 
-# Función que realizará la extracción del trazo de ECG directo de la imagen
-def funcionA(image_data):
-
-    #colocar aquí la lógica para extrar el trazo
-
-    #retornar el vector doble de 10 segundos de la imagen
-    pass
 
 
 # Funcion que evalua el segmento de trazo ECG con el modelo
-def funcionB(vector_doble):
+def funcionB(df, clasificacion):
 
-    #llamar el modelo para la clasificacion de latidos
+    #itera el dataframe para generar la respuesta
+    tipos = ['[N] - Normal','[S] - Supraventricular','[V] - Ventricular','[F] - Fusión','[Q] - Desconocido']
 
+    latidos = []
 
-    #simula una respuesta de analisis para enviar respuesta al front
-    #y guardar información en MongoDB
-    totalLatidos = 5
-    latidos = [
-        { 'tipo': 'Normal (N)', 'latido': [1, 2, 3, 4, 5] },
-        { 'tipo': 'Supraventricular (S)', 'latido': [6, 7, 8, 9, 10] },
-        { 'tipo': 'Ventricular (V)', 'latido': [1, 2, 3, 4, 5] },
-        { 'tipo': 'Unknown (Q)', 'latido': [6, 7, 8, 9, 10] },
-        { 'tipo': 'Fusion Beat (F)', 'latido': [6, 7, 8, 9, 10] }
-    ]
-    return {'totalLatidos' : totalLatidos, 'latidos': latidos}
+    for i in range(df.shape[0]):
+        latidos.append(
+            {
+                'tipo': tipos[clasificacion[i]],
+                'latido': df.iloc[i]
+            }
+            )
+
+    #print(latidos)
+
+#    totalLatidos = 5
+#    latidos = [
+#        { 'tipo': 'Normal (N)', 'latido': [1, 2, 3, 4, 5] },
+#        { 'tipo': 'Supraventricular (S)', 'latido': [6, 7, 8, 9, 10] },
+#        { 'tipo': 'Ventricular (V)', 'latido': [1, 2, 3, 4, 5] },
+ #       { 'tipo': 'Unknown (Q)', 'latido': [6, 7, 8, 9, 10] },
+ #       { 'tipo': 'Fusion Beat (F)', 'latido': [6, 7, 8, 9, 10] }
+ #   ]
+    return {'totalLatidos' : df.shape[0], 'latidos': latidos}
 
 
 # se creó un entorno para el desarrollo del back de análisis
@@ -80,4 +98,14 @@ def funcionB(vector_doble):
 
 # para ejecutarlo: uvicorn main:app --reload
 # desde: /Users/acm/Documents/Cursos/Health/Final/codigo/fastapi
+
+
+
+
+
+
+
+
+
+
 

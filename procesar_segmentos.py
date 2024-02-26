@@ -96,7 +96,7 @@ def ajustar_longitud(segmentos, longitud_objetivo):
 
 def procesar_extraer_segmentos(ecg_vector):
 
-    graficar = True
+    graficar = False
 
     #calcula el muestreo del vector que se ha extraido
     muestreo = len(ecg_vector) / 10.0

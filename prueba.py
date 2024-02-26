@@ -8,7 +8,7 @@ import base64
 
 print('Evaluando el proceso de procesar la imagen')
 
-ruta_imagen = 'vector_010.bmp'
+ruta_imagen = 'vector_016.bmp'
 
 #carga la imagen
 imagen = Image.open(ruta_imagen)

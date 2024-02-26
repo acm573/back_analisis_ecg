@@ -52,7 +52,7 @@ def procesar_extraccion(seccion):
 
 #Funcion principal de procesamiento
 def procesar_imagen(img_str):
-    graficar = True
+    graficar = False
 
     #obtiene imagen en escala de grises
     imagen_gris = procesar_imagen_grises(img_str)
